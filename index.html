@@ -1,22 +1,109 @@
 <!DOCTYPE html>
 <html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+body{
+font-family: Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.container{
+max-width:400px;
+margin:auto;
+background:#1e293b;
+padding:20px;
+border-radius:15px;
+box-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+
+h2{
+margin-bottom:20px;
+}
+
+input{
+width:90%;
+padding:12px;
+border:none;
+border-radius:8px;
+margin-bottom:10px;
+font-size:16px;
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:8px;
+background:#6366f1;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#4f46e5;
+}
+
+#loading{
+display:none;
+margin-top:15px;
+}
+
+img{
+margin-top:20px;
+max-width:100%;
+border-radius:10px;
+}
+
+pre{
+text-align:left;
+background:#020617;
+padding:10px;
+border-radius:8px;
+overflow:auto;
+margin-top:15px;
+font-size:12px;
+}
+
+</style>
+
+</head>
 
 <body>
 
+<div class="container">
+
 <h2>AI Image Generator</h2>
 
-<input id="prompt" placeholder="write your idea">
+<input id="prompt" placeholder="Describe your image">
+
+<br>
+
 <button onclick="generate()">Generate</button>
 
-<br><br>
+<div id="loading">
+⏳ Generating image...
+</div>
 
-<img id="img" width="300">
+<img id="img">
+
+<pre id="json"></pre>
+
+</div>
 
 <script>
 
 async function generate(){
 
 const prompt = document.getElementById("prompt").value;
+
+document.getElementById("loading").style.display="block";
 
 const res = await fetch("/api/generate",{
 method:"POST",
@@ -28,13 +115,19 @@ body:JSON.stringify({prompt})
 
 const data = await res.json();
 
-document.getElementById("img").src =
-"data:image/png;base64," + data.image;
+document.getElementById("loading").style.display="none";
+
+document.getElementById("json").textContent=
+JSON.stringify(data,null,2);
+
+if(data.image){
+document.getElementById("img").src=
+"data:image/png;base64,"+data.image;
+}
 
 }
 
 </script>
 
 </body>
-
 </html>
